@@ -4,7 +4,7 @@
 Paycom.uz integration for Flask
 
 ## Links
-* [About PaycomUz](https://https://business.payme.uz/)
+* [About PaycomUz](https://business.payme.uz/)
 * [PaycomUz Docs](https://developer.help.paycom.uz/ru)
 * [PaycomUz Sandbox](https://test.paycom.uz/instruction)
 ## How it Works
