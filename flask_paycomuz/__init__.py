@@ -39,7 +39,7 @@ class Paycom:
             value = db.Column(db.String, nullable=True)
         self.models = [Payme_Transaction, Payme_Account]
         
-    def init_app(self, app:Flask, url_prefix='/api/agrar/payme'):
+    def init_app(self, app:Flask, url_prefix='/payme'):
         paycom_key = app.config.get('PAYCOM_KEY')
         if not paycom_key:
             raise Flask_Paycom_Exception('PAYCOM_KEY is not set, please set it in Flask config')
