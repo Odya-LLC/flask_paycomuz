@@ -170,7 +170,7 @@ setup(
     packages=['flask_paycomuz'],
     zip_safe=False,
     include_package_data=True,
-    platforms='any',
+    platforms=['3.6', '3.7', '3.8', '3.9', '3.10'],
     install_requires=[
         'Flask',"Flask-SQLAlchemy"
     ],

@@ -17,7 +17,6 @@ build/
 .idea/
 docs/_build/
 .vscode
-
 # Coverage reports
 htmlcov/
 .coverage
@@ -26,6 +25,6 @@ htmlcov/
 
 # Dev
 app.py
-config.py
 static/*
 flask_oneid/views.py
+database.db
