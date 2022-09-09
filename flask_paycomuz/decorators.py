@@ -8,7 +8,6 @@ def base64ToString(b):
     return base64.b64decode(b).decode('utf-8')
 
 
-
 def authorize(key):
     def decorator_function(original_function):
         def wrapper_function(*args, **kwargs):

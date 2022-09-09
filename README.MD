@@ -41,6 +41,13 @@ def CheckAllowment(account): # Before creating transaction Flask-PaycomUz send a
         return True
     return False 
 
+def CallbackPayme(transaction): # After Creating and Performing transaction from Payme this function will call with Payme_Transaction as argument
+    if transaction.state == 1: # Successful creating transaction in Payme
+        pass
+    if transaction.state == 2: # Successful performing transaction in Payme
+        pass
+    
+
 
 def create_app():
     app = Flask(__name__)
@@ -48,6 +55,7 @@ def create_app():
     
     paycom.Register_Account_Data(['order_id']) # Register Paycom payment details, requires to set before init app
     paycom.Register_Validators(CheckAllowment) # Register your Validator for payment, requires to set before init app
+    paycom.Register_Callback(CallbackPayme) # Register your Callback function which will be called after Creating and Performing transaction
     paycom.init_app(app, url_prefix='/payme') # Init Paycom to your application, url_prefix to add view to app, defualt /payme, in that case Flask-PaycomUz register JSON-RPC route to recieve requests from PaycomUz as https://example.uz/payme
     
     @app.get("/")

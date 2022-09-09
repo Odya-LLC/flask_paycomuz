@@ -31,6 +31,7 @@ class Paycom:
                             "state" : self.state}
                     }
         
+        
         class Payme_Account(db.Model):
             __tablename__ = 'payme_account'
             id = db.Column(db.Integer, primary_key = True)
@@ -38,6 +39,7 @@ class Paycom:
             key = db.Column(db.String, nullable=True)
             value = db.Column(db.String, nullable=True)
         self.models = [Payme_Transaction, Payme_Account]
+        
         
     def init_app(self, app:Flask, url_prefix='/payme'):
         paycom_key = app.config.get('PAYCOM_KEY')
@@ -48,18 +50,28 @@ class Paycom:
             raise Flask_Paycom_Exception('PAYCOM_ID is not set, please set it in Flask config')
         if self.validator is None:
             raise Flask_Paycom_Exception('Please set validator before init app, use Register_Validators method to set')
+        if self.callback is None:
+            raise Flask_Paycom_Exception('Please register callback function before init app, use Register_Callback method to set')
+        
         self.paycom_key = paycom_key
         self.paycom_id = paycom_id
 
-        view = PaycomMethodView.as_view('paycom',models=self.models, db=self.db, account_data=self.account_data, validator=self.validator)
+        view = PaycomMethodView.as_view('paycom',models=self.models, db=self.db, account_data=self.account_data, validator=self.validator, callback = self.callback)
         view = authorize(key=paycom_key)(view)
         app.add_url_rule(url_prefix, view_func=view, methods=['POST'])
+    
     
     def Register_Account_Data(self, account_data):
         self.account_data = account_data
     
+    
     def Register_Validators(self, valitdator):
         self.validator = valitdator
+        
+    
+    def Register_Callback(self, callback):
+        self.callback = callback
+    
     
     def Generate(self, amount, return_url=None, **kwargs):
         if len(self.account_data) == 0:

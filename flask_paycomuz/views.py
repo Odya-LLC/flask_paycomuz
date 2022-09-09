@@ -5,12 +5,13 @@ import time
 p_errors = PaycomErrors()
 
 class Paycom_JSON_RPC():
-    def __init__(self, db, models, account_data, validator):
+    def __init__(self, db, models, account_data, validator, callback):
         self.models = models
         self.db = db
         self.Payme_Transaction, self.Payme_Account = self.models
         self.account_data = account_data
         self.validator = validator
+        self.callback = callback
 
 
     def CheckPerformTransaction(self, data):
@@ -20,16 +21,15 @@ class Paycom_JSON_RPC():
             }}
         return p_errors.NotExist(data['id'])
         
+        
     def CreateTransaction(self,data):
         if self.validator(data['params']['account']):
-
             transaction_id = data['params']['id']
             tr = self.Payme_Transaction.query.filter(self.Payme_Transaction.transaction_id == transaction_id).first()
             if tr:
                 if tr.state != 1:
                     return p_errors.CantCreateTr(data['id'])
                 return tr.result()
-
             tr = self.Payme_Transaction(
                 payme_id = data['id'],
                 transaction_id = data['params']['id'],
@@ -47,11 +47,12 @@ class Paycom_JSON_RPC():
                 )
                 self.db.session.add(ac)
                 self.db.session.commit()
+            self.callback(tr)
             return tr.result()
         return p_errors.NotExist(data['id'])
         
+        
     def CheckTransaction(self,data):
-
         tr = self.Payme_Transaction.query.filter(self.Payme_Transaction.transaction_id == data['params']['id']).first()
         if not tr:
             return p_errors.TransactionNotFound(data['id'])
@@ -71,17 +72,19 @@ class Paycom_JSON_RPC():
         tr = self.Payme_Transaction.query.filter(self.Payme_Transaction.transaction_id == data['params']['id']).first()
         if not tr:
             return p_errors.TransactionNotFound(data['id'])
-        
         if tr.state != 2:
             tr.time = int(time.time() * 1000)
             tr.state = 2
             self.db.session.add(tr)
             self.db.session.commit()
+            self.callback(tr)
         return {"result" : {
                 "transaction" : tr.transaction_id,
                 "perform_time" : tr.time,
                 "state" : tr.state
             }}
+        
+        
     def Paycom_Rotate(self, data):
         if data['method'] == 'CheckPerformTransaction':
             return self.CheckPerformTransaction(data)
@@ -92,16 +95,20 @@ class Paycom_JSON_RPC():
         if data['method'] == 'PerformTransaction':
             return self.PerformTransaction(data)
 
+
 class PaycomMethodView(MethodView):
     init_every_request = False
-    def __init__(self, models, account_data, validator, db):
+    def __init__(self, models, account_data, validator, db, callback):
         self.models = models
         self.db = db
         self.account_data = account_data
         self.validator = validator
+        self.callback = callback
+        
+        
     def post(self):
         data = request.get_json()
-        jrpc = Paycom_JSON_RPC(self.db, self.models, self.account_data, self.validator)
+        jrpc = Paycom_JSON_RPC(self.db, self.models, self.account_data, self.validator, self.callback)
         return jrpc.Paycom_Rotate(data)
         
     

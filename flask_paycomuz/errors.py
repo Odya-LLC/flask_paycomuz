@@ -43,10 +43,16 @@ class PaycomErrors:
 
     def Unauthorized(self, id):
         return self.__return_Error('bad_auth', id)
+    
+    
     def NotExist(self, id):
         return self.__return_Error('not_exist', id)
+    
+    
     def CantCreateTr(self, id):
         return self.__return_Error('cant_create_tr', id)
+    
+    
     def TransactionNotFound(self, id):
         return self.__return_Error('tr_not_found', id)
 
