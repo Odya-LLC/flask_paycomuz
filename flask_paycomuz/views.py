@@ -15,11 +15,16 @@ class Paycom_JSON_RPC():
 
 
     def CheckPerformTransaction(self, data):
-        if self.validator(data['params']['account']):
-            return {"result" : {
+        validate, detail = self.validator(data['params']['account'])
+        res = {"result" : {
                 "allow" : True
             }}
-        return p_errors.NotExist(data['id'])
+        if not validate:
+            return p_errors.NotExist(data['id'])
+        if len(detail) != 0:
+            res['detail'] = detail
+        return res
+        
         
         
     def CreateTransaction(self,data):
@@ -83,6 +88,9 @@ class Paycom_JSON_RPC():
                 "perform_time" : tr.time,
                 "state" : tr.state
             }}
+    
+    def CancelTransaction(self,data):
+        return p_errors.CantCancel(data['id'])
         
         
     def Paycom_Rotate(self, data):
@@ -94,6 +102,8 @@ class Paycom_JSON_RPC():
             return self.CheckTransaction(data)
         if data['method'] == 'PerformTransaction':
             return self.PerformTransaction(data)
+        if data['method'] == 'CancelTransaction':
+            return self.CancelTransaction(data)
 
 
 class PaycomMethodView(MethodView):
