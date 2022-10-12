@@ -8,10 +8,31 @@ paycom = Paycom(db)
 orders = [1,2,3,4,5,6]
 
 def CheckAllowment(account): # Before creating transaction Flask-PaycomUz send account data which will have key whick you gave to Register_Account_data to validate it. Return True/False to Validate
-    order_id = account.get('order_id') 
+    order_id = account.get('order_id')
+    detail = {
+            "discount": { 
+                "title": "Скидка 5%",
+                "price": 10000
+            },
+            "shipping": { 
+                "title": "Доставка до ттз-4 28/23",
+                "price": 500000
+            },
+            "items": [ 
+                {
+                    "title": "Помидоры", 
+                    "price": 505000, 
+                    "count": 2, 
+                    "code": "00702001001000001", 
+                    "units": 241092, 
+                    "vat_percent": 15, 
+                    "package_code": "123456"
+                }
+            ]
+        }
     if int(order_id) in orders:
-        return True
-    return False 
+        return True, detail
+    return False, {}
 
 def CallbackPayme(transaction): # After Creating and Performing transaction from Payme this function will call with Payme_Transaction as argument
     if transaction.state == 1: # Successful creating transaction in Payme
