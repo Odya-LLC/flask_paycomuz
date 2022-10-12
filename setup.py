@@ -43,12 +43,33 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 paycom = Paycom(db)
 
-def CheckAllowment(account): # Before creating transaction Flask-PaycomUz send account data which will have key whick you gave to Register_Account_data to validate it. Return True/False to Validate
+def CheckAllowment(account): # Before creating transaction Flask-PaycomUz send account data which will have key whick you gave to Register_Account_data to validate it. Return True/False and detail object
     order_id = account.get('order_id') 
     res = Order.query.filter(Order.id == order_id).first()
+    detail = {
+            "discount": { # скидка, необязательное поле
+                "title": "Скидка 5%",
+                "price": 10000
+            },
+            "shipping": { # доставка, необязательное поле
+                "title": "Доставка до ттз-4 28/23",
+                "price": 500000
+            },
+            "items": [ # товарная позиция, обязательное поле для фискализации
+                {
+                    "title": "Помидоры", # нааименование товара или услуги
+                    "price": 505000, # цена за единицу товара или услуги, сумма указана в тийинах
+                    "count": 2, # кол-во товаров или услуг
+                    "code": "00702001001000001", #  код *ИКПУ обязательное поле
+                    "units": 241092, # значение изменится в зависимости от вида товара
+                    "vat_percent": 15, # обязательное поле, процент уплачиваемого НДС для данного товара или услуги
+                    "package_code": "123456" # Код упаковки для конкретного товара или услуги, содержится на сайте в деталях найденного ИКПУ.
+                }
+            ]
+        }
     if res:
-        return True
-    return False 
+        return True, detail
+    return False, %s%s
 
 def CallbackPayme(transaction): # After Creating and Performing transaction from Payme this function will call with Payme_Transaction as argument
     if transaction.state == 1: # Successful creating transaction in Payme
@@ -155,11 +176,11 @@ admin.add_view(ModelView(paycom.models[1], db.session))
 
 ## Licence
 This project is licensed under the MIT License (see the `LICENSE` file for details).
-"""
+"""%("{", "}")
 
 setup(
     name='Flask-PaycomUz',
-    version='1.2.0',
+    version='1.2.1',
     url='https://github.com/Odya-LLC/flask_paycomuz',
     license='MIT',
     author='odya',
