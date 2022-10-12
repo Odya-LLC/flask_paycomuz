@@ -69,7 +69,9 @@ def CheckAllowment(account): # Before creating transaction Flask-PaycomUz send a
         }
     if res:
         return True, detail
-    return False, %s%s
+    return False, {
+        
+    }
 
 def CallbackPayme(transaction): # After Creating and Performing transaction from Payme this function will call with Payme_Transaction as argument
     if transaction.state == 1: # Successful creating transaction in Payme
@@ -176,7 +178,7 @@ admin.add_view(ModelView(paycom.models[1], db.session))
 
 ## Licence
 This project is licensed under the MIT License (see the `LICENSE` file for details).
-"""%("{", "}")
+"""
 
 setup(
     name='Flask-PaycomUz',
