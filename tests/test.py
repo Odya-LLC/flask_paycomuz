@@ -30,6 +30,38 @@ class TestAPI(unittest.TestCase):
         with app.test_client() as client:
             res = client.post('/payme', headers=head, json=data)
             self.assertEqual(json.loads(res.data)['error']['code'],-32504)
+    def test_checkperform(self):
+        data = {
+                "jsonrpc": "2.0",
+                "id": 97774,
+                "method": "CheckPerformTransaction",
+                "params": {
+                    "amount": 200000,
+                    "account": {
+                        "order_id": "1"
+                    }
+                }
+            }
+        
+        with app.test_client() as client:
+            res = client.post('/payme', headers=self.headers, json=data)
+            res = json.loads(res.data)
+            self.assertEqual(res['result']['allow'],True)
+    def test_cancel_tr(self):
+        data = {
+                    "jsonrpc": "2.0",
+                    "id": 6110,
+                    "method": "CancelTransaction",
+                    "params": {
+                        "id": "631ae0bcf10971cd09f18389",
+                        "reason": 3
+                    }
+                }
+        with app.test_client() as client:
+            res = client.post('/payme', headers = self.headers, json=data)
+            res = json.loads(res.data)
+            self.assertEqual(res['error']['code'], -31008)
+            
     def test_create_tr(self):
         data = {
                 "jsonrpc": "2.0",
