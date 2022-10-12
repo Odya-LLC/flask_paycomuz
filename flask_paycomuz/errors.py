@@ -3,7 +3,8 @@ class PaycomErrors:
         "bad_auth" : -32504,
         "not_exist" : -31099,
         "cant_create_tr" : -31008,
-        'tr_not_found' : -31003
+        'tr_not_found' : -31003,
+        "cant_cancel" : -31008
     }
     messages = {
         -32504 : {
@@ -25,6 +26,11 @@ class PaycomErrors:
             "ru" : "Транзакция не найдена",
             "uz" : "Tranzaksiya topilmadi",
             "en" : "Transaction not found"
+        },
+        -31007 : {
+            "ru" : "Невозможно отменить транзакцию",
+            "uz" : "Tranzaksiya bekor qilib bo'lmaydi",
+            "en" : "Can't cancel transaction"
         }
     }
     def __init__(self):
@@ -55,4 +61,7 @@ class PaycomErrors:
     
     def TransactionNotFound(self, id):
         return self.__return_Error('tr_not_found', id)
+    
+    def CantCancel(self, id):
+        return self.__return_Error('cant_cancel', id)
 
