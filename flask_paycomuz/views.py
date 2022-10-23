@@ -28,7 +28,8 @@ class Paycom_JSON_RPC():
         
         
     def CreateTransaction(self,data):
-        if self.validator(data['params']['account']):
+        validate, _d = self.validator(data['params']['account']) 
+        if validate:
             transaction_id = data['params']['id']
             tr = self.Payme_Transaction.query.filter(self.Payme_Transaction.transaction_id == transaction_id).first()
             if tr:
