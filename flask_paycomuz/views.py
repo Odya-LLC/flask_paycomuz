@@ -79,6 +79,8 @@ class Paycom_JSON_RPC():
         tr = self.Payme_Transaction.query.filter(self.Payme_Transaction.transaction_id == data['params']['id']).first()
         if not tr:
             return p_errors.TransactionNotFound(data['id'])
+        if tr.state == -1:
+            return p_errors.TransactionNotFound(data['id'])
         if tr.state != 2:
             tr.time = int(time.time() * 1000)
             tr.state = 2
