@@ -67,6 +67,7 @@ def create_app():
         return jsonify({'msg' : url})
 
     with app.app_context():
+        db.drop_all()
         db.create_all() # Don't forget to create db, flask_paycomuz adds 2 table to db, Payme_Transaction and Payme_Account
 
 

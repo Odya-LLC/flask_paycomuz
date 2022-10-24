@@ -62,15 +62,16 @@ class Paycom_JSON_RPC():
         tr = self.Payme_Transaction.query.filter(self.Payme_Transaction.transaction_id == data['params']['id']).first()
         if not tr:
             return p_errors.TransactionNotFound(data['id'])
-        per_time = 0 if tr.state == 1 else tr.time
+        per_time = tr.time if tr.state == 2 else 0
+        can_time = tr.time if tr.state == -1 else 0
         return {
             "result" : {
                 "create_time" : tr.created_at,
                 "perform_time" : per_time,
-                "cancel_time" : 0,
+                "cancel_time" : can_time,
                 "transaction" : tr.transaction_id,
                 "state" : tr.state,
-                "reason" : None
+                "reason" : tr.reason
             }
         }
         
@@ -91,6 +92,24 @@ class Paycom_JSON_RPC():
             }}
     
     def CancelTransaction(self,data):
+        tr = self.Payme_Transaction.query.filter(self.Payme_Transaction.transaction_id == data['params']['id']).first()
+        if not tr:
+            return p_errors.TransactionNotFound(data['id'])
+        if tr.state == 1:
+            tr.state = -1
+            tr.time = int(time.time() * 1000)
+            tr.reason = data['params']['reason']
+            self.db.session.add(tr)
+            self.db.session.commit()
+            return {
+                "result" : {
+                    "transaction" : tr.transaction_id,
+                    "cancel_time" : tr.time,
+                    "state" : tr.state,
+                    "reason" : tr.reason
+                }
+            }
+            
         return p_errors.CantCancel(data['id'])
         
         

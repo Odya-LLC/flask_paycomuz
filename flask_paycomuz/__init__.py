@@ -22,6 +22,7 @@ class Paycom:
             amount = db.Column(db.Integer, nullable=True)
             state = db.Column(db.Integer, default=1)
             created_at = db.Column(db.BigInteger, nullable=False)
+            reason  = db.Column(db.String, nullable=True)
             account = db.relationship('Payme_Account', backref='payme_transaction')
 
             def result(self):
@@ -30,6 +31,7 @@ class Paycom:
                             "transaction" : self.transaction_id,
                             "state" : self.state}
                     }
+            
         
         
         class Payme_Account(db.Model):

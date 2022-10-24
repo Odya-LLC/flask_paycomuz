@@ -182,7 +182,7 @@ This project is licensed under the MIT License (see the `LICENSE` file for detai
 
 setup(
     name='Flask-PaycomUz',
-    version='1.2.2',
+    version='1.2.3',
     url='https://github.com/Odya-LLC/flask_paycomuz',
     license='MIT',
     author='odya',

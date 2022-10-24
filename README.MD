@@ -163,7 +163,7 @@ admin.add_view(ModelView(paycom.models[1], db.session))
 - [x] CreateTransaction
 - [x] CheckTransaction
 - [x] PerformTransaction
-- [ ] CancelTransaction
+- [x] CancelTransaction
 
 ## Licence
 This project is licensed under the MIT License (see the `LICENSE` file for details).
