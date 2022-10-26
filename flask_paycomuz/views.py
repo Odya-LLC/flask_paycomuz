@@ -100,7 +100,7 @@ class Paycom_JSON_RPC():
         if tr.state == 1:
             tr.state = -1
             tr.time = int(time.time() * 1000)
-            tr.reason = data['params']['reason']
+            tr.reason = int(data['params']['reason'])
             self.db.session.add(tr)
             self.db.session.commit()
             return {
